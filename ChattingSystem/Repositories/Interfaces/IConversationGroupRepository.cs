@@ -1,0 +1,11 @@
+﻿using ChattingSystem.Models;
+
+namespace ChattingSystem.Repositories.Interfaces
+{
+    public interface IConversationGroupRepository
+    {
+        Task<ConversationGroup> Create(ConversationGroup conversationGroup);
+        Task<ConversationGroup> GetByConversationIdAndGroupId(int conversationId, int groupId);
+        Task<ConversationGroup> GetConversationIdByGroupId(int groupId);
+    }
+}
