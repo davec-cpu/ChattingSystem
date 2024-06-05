@@ -12,7 +12,7 @@ namespace ChattingSystem.Services.Implements
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersExceptOneSpecific(int userId)
+        public async Task<IEnumerable<User>>? GetAllUsersExceptOneSpecific(int? userId)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public Task<User> GetById(int? Id)
+        public Task<User>? GetById(int? Id)
         { 
             //if (Id == 0000) return null;
             var result = _userRepository.GetById(Id);

@@ -4,8 +4,8 @@ namespace ChattingSystem.Repositories.Interfaces
 {
     public interface IConversationGroupRepository
     {
-        Task<ConversationGroup> Create(ConversationGroup conversationGroup);
-        Task<ConversationGroup> GetByConversationIdAndGroupId(int conversationId, int groupId);
-        Task<ConversationGroup> GetConversationIdByGroupId(int groupId);
+        Task<ConversationGroup>? Create(ConversationGroup? conversationGroup);
+        Task<int>? GetConversationIdByGroupId(int? groupId);
+        Task<ConversationGroup>? Delete(int? groupId);
     }
 }

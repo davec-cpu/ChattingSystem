@@ -3,6 +3,7 @@ using ChattingSystem.Models;
 using ChattingSystem.Repositories.Interfaces;
 using Dapper;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ChattingSystem.Repositories.Implements
 {
@@ -13,27 +14,26 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<Conversation> GetById(int? Id)
+        public async Task<Conversation>? GetById(int? Id)
         {
             string query = "SELECT * FROM Conversation WHERE Id = @Id";
             using (var connection = _context.CreateConnection())
             {
-                var conversation = await connection.QueryFirstOrDefaultAsync<Conversation>(query, new { Id = Id});
+                var conversation = await connection.QueryFirstOrDefaultAsync<Conversation>(query, new { Id});
                 return conversation;
             }
         }
 
-        public async Task<Conversation> Create(Conversation conversation)
+        public async Task<Conversation>? Create(Conversation? conversation)
         {
             Conversation result = new Conversation();
             try
             {
                 Console.WriteLine("create conversation");
-                string query = "INSERT INTO Conversation (Id, SiteId, Title, Status) " +
+                string query = "INSERT INTO Conversation (SiteId, Title, Status) " +
                     "OUTPUT INSERTED.*" +
-                    "values(@Id, @SiteId, @Title, @Status);";
+                    "values(@SiteId, @Title, @Status);";
                 var parammeters = new DynamicParameters();
-                parammeters.Add("Id", conversation.Id, System.Data.DbType.Int32);
                 parammeters.Add("SiteId", conversation.SiteId, System.Data.DbType.Int32);
                 parammeters.Add("Title", conversation.Title, System.Data.DbType.String);
                 parammeters.Add("Status", conversation.Status, System.Data.DbType.Int32);
@@ -59,10 +59,21 @@ namespace ChattingSystem.Repositories.Implements
             using (var connection = _context.CreateConnection())
             {
                 var conversation = await connection.QueryFirstOrDefaultAsync<Conversation>(query, new { userId });
-                //var sconversation = conversation.ToList();
                 var totalrecord = conversation.TotalRecords;
                 var ieparticipant = new[] { conversation };
                 return (ieparticipant, totalrecord);
+            }
+        }
+
+        public async Task<Conversation>? Delete(int? conId)
+        {
+            string query = "DELETE FROM Conversation " +
+                "OUTPUT DELETED.* " +
+                "WHERE Conversation.Id = @conId";
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.QueryFirstOrDefaultAsync<Conversation>(query, new { conId });
+                return result;
             }
         }
     }

@@ -2,6 +2,7 @@
 using ChattingSystem.Repositories.Implements;
 using ChattingSystem.Repositories.Interfaces;
 using ChattingSystem.Services.Interfaces;
+using System.Collections;
 using System.Text.RegularExpressions;
 
 namespace ChattingSystem.Services.Implements
@@ -13,7 +14,7 @@ namespace ChattingSystem.Services.Implements
         {
             _groupUserRepository = groupUserRepository;
         }
-        public async Task<GroupUser> Create(GroupUser groupUser)
+        public async Task<GroupUser>? Create(GroupUser? groupUser)
         {
             try
             {
@@ -27,7 +28,7 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<IEnumerable<GroupUser>?> GetByGroupId(int groupId)
+        public async Task<IEnumerable<GroupUser>>? GetByGroupId(int? groupId)
         {
             try
             {
@@ -41,7 +42,7 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<IEnumerable<GroupUser>?> GetByUserId(int userId)
+        public async Task<IEnumerable<GroupUser>>? GetByUserId(int? userId)
         {
             try
             {
@@ -52,6 +53,39 @@ namespace ChattingSystem.Services.Implements
             {
                 Console.WriteLine(ex);
                 throw;
+            }
+        }
+            
+        public async Task<IEnumerable<GroupUser>>? CreateMultiple(IEnumerable<GroupUser>? groupUsers) 
+        {
+            try
+            {
+                List<GroupUser> result = new List<GroupUser>();
+                foreach (var groupUser in groupUsers)
+                {
+                    var temp = await _groupUserRepository.Create(groupUser);
+                    result.Add(temp);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<GroupUser>>? DeleteByGroupId(int? groupId)
+        {
+            try
+            {
+                var result = await _groupUserRepository.DeleteByGroupId(groupId);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
             }
         }
     }

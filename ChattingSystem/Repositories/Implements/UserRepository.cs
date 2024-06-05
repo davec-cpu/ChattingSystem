@@ -12,7 +12,7 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<User> GetById(int? Id)
+        public async Task<User>? GetById(int? Id)
         {
             string query = "SELECT * FROM Users WHERE Id = @id";
             using (var connection = _context.CreateConnection())
@@ -22,7 +22,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersExceptOneSpecific(int userId)
+        public async Task<IEnumerable<User>>? GetAllUsersExceptOneSpecific(int? userId)
         {
             string query = "SELECT * FROM Users WHERE NOT Id = @userId";
             using (var connections = _context.CreateConnection())

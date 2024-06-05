@@ -3,6 +3,7 @@ using ChattingSystem.Models;
 using ChattingSystem.Repositories.Interfaces;
 using Dapper;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace ChattingSystem.Repositories.Implements
 {
@@ -13,7 +14,7 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<IEnumerable<Participant?>> Create(Participant participant)
+        public async Task<IEnumerable<Participant>>? Create(Participant? participant)
         {
             try
             {
@@ -43,7 +44,7 @@ namespace ChattingSystem.Repositories.Implements
 
         }
 
-        public async Task<Participant?> GetById(int? Id)
+        public async Task<Participant>? GetById(int? Id)
         {
             string query = "SELECT * FROM Participant WHERE Id = @Id";
             using (var connection = _context.CreateConnection())
@@ -53,7 +54,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<IEnumerable<Participant?>> GetByConversationId(int? Id)
+        public async Task<IEnumerable<Participant>>? GetByConversationId(int? Id)
         {
             string query = "SELECT * FROM Participant WHERE ConversationId = @Id";
             using (var connection = _context.CreateConnection())
@@ -64,7 +65,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<Participant?> GetByConversationIdObj(int? Id)
+        public async Task<Participant>? GetByConversationIdObj(int? Id)
         {
             string query = "SELECT * FROM Participant WHERE ConversationId = @Id";
             using (var connection = _context.CreateConnection())
@@ -74,7 +75,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<Participant?> CreateObj(Participant participant)
+        public async Task<Participant>? CreateObj(Participant? participant)
         {
             try
             {
@@ -102,20 +103,30 @@ namespace ChattingSystem.Repositories.Implements
             
         }
 
-        public async Task<Participant?> GetByConversationIdandUserId(int? ConversationId, int? UserId)
+        public async Task<Participant>? GetByConversationIdandUserId(int? ConversationId, int? UserId)
         {
             string query = "SELECT * FROM Participant WHERE ConversationId = @ConversationId AND UserId = @UserId";
-            //Console.WriteLine("ConId: " + ConversationId + "UserId: " + UserId);
             var parameters = new DynamicParameters();
             parameters.Add("@ConversationId", ConversationId, System.Data.DbType.Int32);
             parameters.Add("@UserId", UserId, System.Data.DbType.Int32);
-            //var fffnsf = JsonConvert.SerializeObject(parameters, Formatting.Indented);
-            //Console.WriteLine(fffnsf);
             using (var connection = _context.CreateConnection())
             {
                 var participant = await connection.QueryFirstOrDefaultAsync<Participant>(query, parameters);
                 return participant;
             }
         }
+
+        public async Task<IEnumerable<Participant>>? DeleteByConId(int? conId)
+        {
+            string query = "DELETE FROM Participant " +
+                "OUTPUT DELETED.* " +
+                "WHERE Participant.ConversationId = @conId";
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.QueryAsync<Participant>(query, new { conId });
+                return result;
+            }
+        }
+
     }
 }

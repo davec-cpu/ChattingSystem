@@ -12,7 +12,7 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<GroupUser?> Create(GroupUser groupUser)
+        public async Task<GroupUser>? Create(GroupUser? groupUser)
         {
             string query = "INSERT INTO GroupUser(GroupId, UserId)" +
                             "OUTPUT INSERTED.*" +
@@ -28,23 +28,35 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<IEnumerable<GroupUser>?> GetByGroupId(int? groupId)
+        public async Task<IEnumerable<GroupUser>>? DeleteByGroupId(int? groupId)
+        {
+            string query = "DELETE FROM GroupUser " +
+                "OUTPUT DELETED.* " +
+                "WHERE GroupUser.GroupId = @groupId";
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.QueryAsync<GroupUser>(query, new { groupId });
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<GroupUser>>? GetByGroupId(int? groupId)
         {
             string query = "SELECT * FROM GroupUser WHERE GroupUser.GroupId = @groupId";
             
             using (var con = _context.CreateConnection())
             {
-                var result = await con.QueryAsync<GroupUser>(query, new {groupId = groupId});
+                var result = await con.QueryAsync<GroupUser>(query, new {groupId});
                 return result;
             }
         }
 
-        public async Task<IEnumerable<GroupUser>?> GetByUserId(int? userId)
+        public async Task<IEnumerable<GroupUser>>? GetByUserId(int? userId)
         {
             string query = "SELECT * FROM GroupUser WHERE GroupUser.UserId = @userId";
             using (var con = _context.CreateConnection())
             {
-                var result = await con.QueryAsync<GroupUser>(query, new { userId = userId });
+                var result = await con.QueryAsync<GroupUser>(query, new { userId });
                 return result;
             }
         }

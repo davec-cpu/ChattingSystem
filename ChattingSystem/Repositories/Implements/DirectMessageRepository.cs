@@ -14,7 +14,7 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<DirectMessage> Create(DirectMessage message)
+        public async Task<DirectMessage>? Create(DirectMessage? message)
         {
             string query = "INSERT INTO DirectMessage (SenderId, ReceiverId, Content, CreatedAt)" +
                             "OUTPUT INSERTED.*" +
@@ -31,7 +31,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<IEnumerable<DirectMessage?>> GetAllMsgsBySenderIdAndReceiverId(int senderId, int receiverId) 
+        public async Task<IEnumerable<DirectMessage>>? GetAllMsgsBySenderIdAndReceiverId(int? senderId, int? receiverId) 
         {
             string query = " SELECT * FROM DirectMessage WHERE SenderId = @senderId AND ReceiverId = @receiverId " +
                             "OR SenderId = @receiverId AND ReceiverId = @senderId ";

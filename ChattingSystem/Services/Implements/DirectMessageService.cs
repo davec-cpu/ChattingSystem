@@ -17,7 +17,7 @@ namespace ChattingSystem.Services.Implements
             _directMessageRepository = directMessageRepository;
             _userRepository = userRepository;
         }
-        public async Task<DirectMessage> Create(DirectMessage message)
+        public async Task<DirectMessage>? Create(DirectMessage? message)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<IEnumerable<DirectMessageExpansion.General>> GetAllMsgsBySenderIdAndReceiverId(int senderId, int receiverId)
+        public async Task<IEnumerable<DirectMessageExpansion.General>>? GetAllMsgsBySenderIdAndReceiverId(int? senderId, int? receiverId)
         {
             try
             {

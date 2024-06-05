@@ -1,6 +1,7 @@
 ﻿using ChattingSystem.Models;
 using ChattingSystem.Repositories.Interfaces;
 using ChattingSystem.Services.Interfaces;
+using Microsoft.OpenApi.Validations;
 using System.Reflection.Metadata.Ecma335;
 
 namespace ChattingSystem.Services.Implements
@@ -12,7 +13,7 @@ namespace ChattingSystem.Services.Implements
         {
             _participantRepository = participantRepository;
         }
-        public async Task<IEnumerable<Participant?>> Create(Participant participant)
+        public async Task<IEnumerable<Participant>>? Create(Participant? participant)
         {
             try
             {
@@ -26,7 +27,27 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<Participant?> CreateObj(Participant participant)
+        public async Task<IEnumerable<Participant>>? CreateMultiple(IEnumerable<Participant>? participant)
+        {
+            try
+            {
+                List<Participant> result = new List<Participant>();
+
+                foreach (var item in participant)
+                {
+                    var temp = await _participantRepository.CreateObj(item);
+                    result.Add(temp);
+                }
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        public async Task<Participant>? CreateObj(Participant? participant)
         {
             try
             {
@@ -39,7 +60,21 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<Participant?> GetByConversationAndUserId(int? ConversationId, int? UserId)
+        public async Task<IEnumerable<Participant>>? DeleteByConId(int? conId)
+        {
+            try
+            {
+                var result = await _participantRepository.DeleteByConId(conId);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<Participant>? GetByConversationAndUserId(int? ConversationId, int? UserId)
         {
             try
             {
@@ -53,18 +88,18 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<IEnumerable<Participant?>> GetByConversationId(int? Id)
+        public async Task<IEnumerable<Participant>>? GetByConversationId(int? Id)
         {
             var result = await _participantRepository.GetByConversationId(Id);
             return result;
         }
-        public async Task<Participant?> GetByConversationIdObj(int? Id)
+        public async Task<Participant>? GetByConversationIdObj(int? Id)
         {
             var result = await _participantRepository.GetByConversationIdObj(Id);
             return result;
         }
 
-        public async Task<Participant?> GetById(int? Id)
+        public async Task<Participant>? GetById(int? Id)
         {
             var result = await _participantRepository.GetById(Id);
             return result;

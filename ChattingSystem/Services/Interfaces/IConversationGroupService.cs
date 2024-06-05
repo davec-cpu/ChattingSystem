@@ -4,7 +4,7 @@ namespace ChattingSystem.Services.Interfaces
 {
     public interface IConversationGroupService
     {
-        Task<ConversationGroup> Create (ConversationGroup conversationGroup);
-        Task<ConversationGroup> GetConversationIdByGroupId(int groupId);
+        Task<ConversationGroup>? Create (ConversationGroup? conversationGroup);
+        Task<int>? GetConversationIdByGroupId(int? groupId);
     }
 }

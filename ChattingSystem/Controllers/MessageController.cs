@@ -76,9 +76,9 @@ namespace ChattingSystem.Controllers
         {
             try
             {
-                var conversation = await _conversationGroupRepository.GetConversationIdByGroupId(2);
-                Console.WriteLine("conversationid : " + conversation.ConversationId);
-;                var result = await _participantRepository.GetByConversationIdandUserId(0, conversation.ConversationId);
+                var conversationId = await _conversationGroupRepository.GetConversationIdByGroupId(2);
+                Console.WriteLine("conversationid : " + conversationId);
+;                var result = await _participantRepository.GetByConversationIdandUserId(0, conversationId);
                 return Ok(result);
             }
             catch (Exception ex)

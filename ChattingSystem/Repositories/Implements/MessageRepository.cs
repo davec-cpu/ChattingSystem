@@ -3,6 +3,7 @@ using ChattingSystem.Models;
 using ChattingSystem.Repositories.Interfaces;
 using Dapper;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace ChattingSystem.Repositories.Implements
 {
@@ -12,7 +13,7 @@ namespace ChattingSystem.Repositories.Implements
         public MessageRepository(DapperDbContext context) { 
             _context = context;
         }
-        public async Task<Message?> Create(Message message)
+        public async Task<Message>? Create(Message? message)
         {
             string query = "INSERT INTO Message (SiteId, ParticipantId, ConversationId, Content, Status)" +
                 "OUTPUT INSERTED.* " +
@@ -33,7 +34,19 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<IEnumerable<Message>> GetByConversationId(int? conversationId)
+        public async Task<Message>? DeleteByConId(int? conId)
+        {
+            string query = "DELETE FROM Message " +
+                "OUTPUT DELETED.* " +
+                "WHERE Message.ConversationId = @conId";
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.QueryFirstOrDefaultAsync<Message>(query, new { conId });
+                return result;
+            }
+        }
+
+        public async Task<IEnumerable<Message>>? GetByConversationId(int? conversationId)
         {
             string query = $"SELECT * FROM Message WHERE ConversationId{(conversationId == null ? "IS NULL" : "=@conversationId")}";
             using (var connection = _context.CreateConnection())
@@ -44,7 +57,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<(IEnumerable<Message>?, int?)> GetByConversationIdWithTTRecords(int? conversationId)
+        public async Task<(IEnumerable<Message>?, int?)>? GetByConversationIdWithTTRecords(int? conversationId)
         {
             string query = $"SELECT Message.*, COUNT(Message.Id) OVER() AS TotalRecords FROM Message WHERE Message.ConversationId{(conversationId == null ? "IS NULL" : " = @conversationId")}";
             using (var connections = _context.CreateConnection()) {

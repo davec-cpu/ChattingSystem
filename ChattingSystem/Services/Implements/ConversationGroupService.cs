@@ -11,7 +11,7 @@ namespace ChattingSystem.Services.Implements
         {
             _conversationGroupRepository = conversationGroupRepository;
         }
-        public async Task<ConversationGroup> Create(ConversationGroup conversationGroup)
+        public async Task<ConversationGroup>? Create(ConversationGroup? conversationGroup)
         {
             try
             {
@@ -25,7 +25,7 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<ConversationGroup> GetConversationIdByGroupId(int groupId)
+        public async Task<int>? GetConversationIdByGroupId(int? groupId)
         {
             try
             {

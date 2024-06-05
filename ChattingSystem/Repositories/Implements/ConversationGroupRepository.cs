@@ -13,7 +13,7 @@ namespace ChattingSystem.Repositories.Implements
             _context = context;
         }
 
-        public async Task<ConversationGroup> Create(ConversationGroup conversationGroup)
+        public async Task<ConversationGroup>? Create(ConversationGroup? conversationGroup)
         {
             try
             {
@@ -32,7 +32,6 @@ namespace ChattingSystem.Repositories.Implements
                     Console.WriteLine("success");
                     return result;
                 }
-                
             }
             catch (Exception ex)
             {
@@ -41,19 +40,27 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public Task<ConversationGroup> GetByConversationIdAndGroupId(int conversationId, int groupId)
+        public async Task<ConversationGroup>? Delete(int? groupId)
         {
-            throw new NotImplementedException();
+            string query = "DELETE FROM ConversationGroup " +
+                "OUTPUT DELETED.* " +
+                "WHERE ConversationGroup.GroupId = @groupId";
+            using (var con = _context.CreateConnection())
+            {
+                var result = await con.QuerySingleAsync<ConversationGroup>(query, new { groupId });
+                return result;
+            }
         }
-        public async Task<ConversationGroup> GetConversationIdByGroupId(int groupId)
+
+        public async Task<int>? GetConversationIdByGroupId(int? groupId)
         {
             try
             {
-                string query = "SELECT * FROM ConversationGroup WHERE GroupId = @groupId";
+                string query = "SELECT ConversationId FROM ConversationGroup WHERE GroupId = @groupId";
                 
                 using (var conn = _context.CreateConnection())
                 {
-                    var result = await conn.QueryFirstOrDefaultAsync<ConversationGroup>(query, new {groupId});
+                    var result = await conn.QueryFirstOrDefaultAsync<int>(query, new {groupId});
                     return result;
                 }
             }

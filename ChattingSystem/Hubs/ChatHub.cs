@@ -50,12 +50,7 @@ namespace ChattingSystem.Hubs
                 string value;
                 _tempDb.activeUserId.TryRemove(Context.ConnectionId, out value);
             }
-            Console.WriteLine("After removing...");
-            foreach (KeyValuePair<string, string> pair in _tempDb.activeUserId)
-            {
-                Console.WriteLine("Key: {0}, Value: {1}",
-                                    pair.Key, pair.Value);
-            }
+
             var userList = new List<string>(_tempDb.activeUserId.Values);
             var listcvt = JsonConvert.SerializeObject(userList, Formatting.Indented);
             await Clients.All.SendAsync("UserDisconnected", listcvt);
@@ -73,19 +68,23 @@ namespace ChattingSystem.Hubs
         public async Task SendMessage(int userId, int groupId, string message)
         {
             try
-            {   
-                    var conversation = await _conversationGroupRepository.GetConversationIdByGroupId(groupId);
-                    var participant = await _participantRepository.GetByConversationIdandUserId(conversation.ConversationId, userId);
+            {
+                    var conversationId = await _conversationGroupRepository.GetConversationIdByGroupId(groupId);
+                    var participant = await _participantRepository.GetByConversationIdandUserId(conversationId, userId);
+                Console.WriteLine("userid: " + userId + ", groupId: " + groupId + " message; " + message + " conid: " + conversationId);
 
-                    var messageCreate = new Message
+                if (participant == null) Console.WriteLine("participant null");
+                     if (conversationId == null) Console.WriteLine("conversationId null");
+
+                var messageCreate = new Message
                     {
-                        ConversationId = conversation.ConversationId,
+                        ConversationId = conversationId,
                         Content = message,
                         ParticipantId = participant.Id,
                         Status = 1,
                         SiteId = 1
-                    };
-                    //var result = await _messageRepository.Create(messageCreate);
+                    };  
+                    var result = await _messageRepository.Create(messageCreate);
 
                     await Clients
                         .Group("group no." + groupId.ToString())
@@ -118,8 +117,8 @@ namespace ChattingSystem.Hubs
             {
                 _tempDb.activeUserId[Context.ConnectionId] = userId.ToString();
             }
-           
-            var userList = new List<string>(_tempDb.activeUserId.Values);
+            _tempDb.connectedUserId[userId.ToString()] = Context.ConnectionId;
+             var userList = new List<string>(_tempDb.activeUserId.Values);
             userList.ForEach(e => Console.WriteLine(e));
 
             var listcvt =  JsonConvert.SerializeObject(userList, Formatting.Indented);
@@ -139,7 +138,7 @@ namespace ChattingSystem.Hubs
                     Content = msg,
                     CreatedAt = DateTime.Now.ToString("h:mm:ss")
                 };
-                var result = await _directMessageRepository.Create(DMCreate);
+                //var result = await _directMessageRepository.Create(DMCreate);
                 var sender = await _userRepository.GetById(senderId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, "user no." + receiverid.ToString());
 
@@ -148,6 +147,36 @@ namespace ChattingSystem.Hubs
                     .SendAsync("SendDM", msg, senderId, sender.Name);
             }
 
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        public async Task CreateGroup(int[] idArr, int groupId, string groupTitle)
+        {
+            try
+            {
+                foreach (var item in idArr)
+                {
+                    Console.WriteLine(item.ToString());
+                    Console.WriteLine("------");
+                }
+            
+                foreach (var i in idArr)
+                {
+                    if (_tempDb.connectedUserId.TryGetValue(i.ToString(), out string connectionId))
+                    {
+                        await Groups.AddToGroupAsync(connectionId, "newcreatedgroup."+groupId.ToString());
+                        Console.WriteLine("id: " + i.ToString() + "conId: " + connectionId);
+                    }
+                }
+                string msg = "You have been added to group " + groupTitle;
+
+                await Clients
+                       .Group("newcreatedgroup." + groupId.ToString())
+                       .SendAsync("CreateGroup", msg);
+            }
             catch(Exception ex)
             {
                 Console.WriteLine(ex);

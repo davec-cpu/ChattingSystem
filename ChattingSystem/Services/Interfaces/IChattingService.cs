@@ -7,7 +7,7 @@ namespace ChattingSystem.Services.Interfaces
     {
         Task<MessageExpansion.General?> CreateMessage(MessageExpansion.General? general);
         Task<ConversationExpansion.General?> CreateConversation(ConversationExpansion.General? general);
-        Task<(IEnumerable<ConversationExpansion.General?>, int?)> GetConversationsByUserId(int? userId);
+        Task<(IEnumerable<ConversationExpansion.General>?, int?)> GetConversationsByUserId(int? userId);
         Task<(IEnumerable<MessageExpansion.General>?, int?)> GetMessagesByConversationId(int? conversationId);
     }
 }

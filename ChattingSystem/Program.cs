@@ -47,7 +47,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConversationService, ConversationService>();
 builder.Services.AddScoped<IParticipantService, ParticipantService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
-builder.Services.AddScoped<IChattingService, ChattingService>();
+//builder.Services.AddScoped<IChattingService, ChattingService>();
 builder.Services.AddScoped<IConversationGroupService, ConversationGroupService>();
 builder.Services.AddScoped<IGroupUserService,  GroupUserService>();
 builder.Services.AddScoped<IGroupService, GroupService>();

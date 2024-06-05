@@ -11,13 +11,12 @@ namespace ChattingSystem.Services.Implements
         {
             _conversationRepository = conversationRepository;
         }
-        public async Task<Conversation?> Create(Conversation conversation)
+        public async Task<Conversation?> Create(Conversation? conversation)
         {
             Conversation result = new Conversation();
             try
             {
-                Console.WriteLine("Executing conversationService...");
-                 result = await _conversationRepository.Create(conversation);
+                result = await _conversationRepository.Create(conversation);
                 return result;
             }
             catch(Exception ex) 
@@ -27,13 +26,27 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<Conversation> GetById(int? Id)
+        public async Task<Conversation>? GetAll(int? conId)
+        {
+            try
+            {
+                var result = await _conversationRepository.Delete(conId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        public async Task<Conversation>? GetById(int? Id)
         {
             var result = await _conversationRepository.GetById(Id);
             return result;
         }
 
-        public async Task<(IEnumerable<Conversation>, int?)> GetByUserId(int? userId)
+        public async Task<(IEnumerable<Conversation>?, int?)> GetByUserId(int? userId)
         {
             var result = await _conversationRepository.GetByUserId(userId);
             return result;

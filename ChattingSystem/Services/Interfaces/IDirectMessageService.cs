@@ -5,7 +5,7 @@ namespace ChattingSystem.Services.Interfaces
 {
     public interface IDirectMessageService
     {
-        Task<DirectMessage> Create(DirectMessage message);
-        Task<IEnumerable<DirectMessageExpansion.General>> GetAllMsgsBySenderIdAndReceiverId(int senderId, int receiverId);
+        Task<DirectMessage>? Create(DirectMessage? message);
+        Task<IEnumerable<DirectMessageExpansion.General>>? GetAllMsgsBySenderIdAndReceiverId(int? senderId, int? receiverId);
     }
 }
