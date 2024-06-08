@@ -60,17 +60,6 @@ namespace ChattingSystem.Services.Implements
             }
             return result;
         }
-        public Task Push(IEnumerable<int>? userId, Message? message)
-        {
- 
-                string result = $"{(message.Content)}";
-                return Task.CompletedTask;
-        }
-        public async Task<(IEnumerable<Message>?, int?)> GetByConversationIdWithTTRecords(int? conversationId)
-        {
-            var (data, totalRecords) = await _messageRepository.GetByConversationIdWithTTRecords(conversationId);
-            return (data, totalRecords); 
-        }
 
         public async Task<Message>? DeleteByConId(int? conversationId)
         {

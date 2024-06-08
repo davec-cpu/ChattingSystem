@@ -6,7 +6,6 @@ namespace ChattingSystem.Repositories.Interfaces
     {
         Task<Message>? Create(Message? message);
         Task<IEnumerable<Message>>? GetByConversationId(int? conversationId);
-        Task<(IEnumerable<Message>?, int?)>? GetByConversationIdWithTTRecords(int? conversationId);
         Task<Message>? DeleteByConId(int? conId);
         Task<IEnumerable<Message>> DeleteByConversationIdAndParticipantId(int? groupId, int? userId);
 

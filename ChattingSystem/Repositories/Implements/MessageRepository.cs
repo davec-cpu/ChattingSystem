@@ -57,16 +57,6 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<(IEnumerable<Message>?, int?)>? GetByConversationIdWithTTRecords(int? conversationId)
-        {
-            string query = $"SELECT Message.*, COUNT(Message.Id) OVER() AS TotalRecords FROM Message WHERE Message.ConversationId{(conversationId == null ? "IS NULL" : " = @conversationId")}";
-            using (var connections = _context.CreateConnection()) {
-                var result = await connections.QueryFirstOrDefaultAsync<Message>(query, new { conversationId });
-                var totalRecords = result.TotalRecords;
-                var iersult = new[] { result };
-                return (iersult, totalRecords);
-            }
-        }
         
         public async Task<IEnumerable<Message>> DeleteByConversationIdAndParticipantId(int? conId, int? participantId)
         {
