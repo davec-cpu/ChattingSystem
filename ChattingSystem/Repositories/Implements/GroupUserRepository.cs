@@ -43,10 +43,10 @@ namespace ChattingSystem.Repositories.Implements
         public async Task<IEnumerable<GroupUser>>? GetByGroupId(int? groupId)
         {
             string query = "SELECT * FROM GroupUser WHERE GroupUser.GroupId = @groupId";
-            
+
             using (var con = _context.CreateConnection())
             {
-                var result = await con.QueryAsync<GroupUser>(query, new {groupId});
+                var result = await con.QueryAsync<GroupUser>(query, new { groupId });
                 return result;
             }
         }
@@ -60,6 +60,14 @@ namespace ChattingSystem.Repositories.Implements
                 return result;
             }
         }
-
+        public async Task<GroupUser>? DeleteByGroupIdAndUserId(int? groupId, int? userId)
+        {
+            string query = "DELETE FROM GroupUser WHERE GroupUser.UserId = @userId AND GroupId = @groupId";
+            using (var conn = _context.CreateConnection())
+            {
+                var result = await conn.QueryFirstOrDefaultAsync<GroupUser>(query, new { groupId, userId });
+                return result;
+            }
+        }
     }
 }

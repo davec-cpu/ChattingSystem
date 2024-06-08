@@ -67,6 +67,15 @@ namespace ChattingSystem.Repositories.Implements
                 return (iersult, totalRecords);
             }
         }
-
+        
+        public async Task<IEnumerable<Message>> DeleteByConversationIdAndParticipantId(int? conId, int? participantId)
+        {
+            string query = "DELETE FROM Message WHERE ConversationId = @conId AND ParticipantId = @participantId";
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<Message>(query, new { conId, participantId });
+                return result;
+            }
+        }
     }
 }

@@ -14,35 +14,7 @@ namespace ChattingSystem.Repositories.Implements
         {
             _context = context;
         }
-        public async Task<IEnumerable<Participant>>? Create(Participant? participant)
-        {
-            try
-            {
-                string query = "INSERT INTO Participant (SiteId, UserId, ConversationId, Title, Status)" +
-                "OUTPUT INSERTED.*" +
-                " values(@SiteId, @UserId, @ConversationId, @Title, @Status)";
 
-                var parammeters = new DynamicParameters();
-                parammeters.Add("SiteId", participant.SiteId, System.Data.DbType.Int32);
-                parammeters.Add("UserId", participant.UserId, System.Data.DbType.Int32);
-                parammeters.Add("ConversationId", participant.ConversationId, System.Data.DbType.Int32);
-                parammeters.Add("Title", participant.Title, System.Data.DbType.String);
-                parammeters.Add("Status", participant.Status, System.Data.DbType.Int32);
-                Participant result = new Participant();
-                using (var connection = _context.CreateConnection())
-                {
-                    result = await connection.QuerySingleAsync<Participant>(query, parammeters);
-                }
-                var ieresult = new[] { result };
-                return ieresult;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-
-        }
 
         public async Task<Participant>? GetById(int? Id)
         {
@@ -75,7 +47,7 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
-        public async Task<Participant>? CreateObj(Participant? participant)
+        public async Task<Participant>? Create(Participant? participant)
         {
             try
             {
@@ -128,5 +100,27 @@ namespace ChattingSystem.Repositories.Implements
             }
         }
 
+        public async Task<Participant>? DeleteByConIdAndUserId(int? conId, int? userId)
+        {
+            string query = "DELETE FROM Participant " +
+                     "OUTPUT DELETED.* " +
+                     "WHERE ConversationId = @conId AND UserId = @userId";
+
+            using (var conn = _context.CreateConnection())
+            {
+                var result = await conn.QueryFirstOrDefaultAsync<Participant>(query, new { conId, userId });
+                return result;
+            }
+        }
+
+        public async Task<int>? GetUserId(int? participantId)
+        {
+            string query = "SELECT UserId FROM Participant WHERE Id = @participantId";
+            using (var conn = _context.CreateConnection())
+            {
+                var result = await conn.QueryFirstOrDefaultAsync<int>(query, new { participantId });
+                return result;
+            }
+        }
     }
 }

@@ -64,13 +64,11 @@ namespace ChattingSystem.Services.Implements
         {
  
                 string result = $"{(message.Content)}";
-                Console.WriteLine(result);
                 return Task.CompletedTask;
         }
         public async Task<(IEnumerable<Message>?, int?)> GetByConversationIdWithTTRecords(int? conversationId)
         {
             var (data, totalRecords) = await _messageRepository.GetByConversationIdWithTTRecords(conversationId);
-            Console.WriteLine(JsonConvert.SerializeObject(data, Formatting.Indented));
             return (data, totalRecords); 
         }
 
@@ -83,7 +81,19 @@ namespace ChattingSystem.Services.Implements
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                throw;
+            }
+        }
+
+        public async Task<IEnumerable<Message>> DeleteByConversationIdAndParticipantId(int? conId, int? participantId)
+        {
+            try
+            {
+                var result = await _messageRepository.DeleteByConversationIdAndParticipantId(conId, participantId);
+                return result;
+            }
+            catch (Exception ex)
+            {
                 throw;
             }
         }

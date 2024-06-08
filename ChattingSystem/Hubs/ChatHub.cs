@@ -4,6 +4,7 @@ using ChattingSystem.Repositories.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient.DataClassification;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
 namespace ChattingSystem.Hubs
@@ -36,22 +37,16 @@ namespace ChattingSystem.Hubs
 
         public override async Task OnConnectedAsync()
         {
-             await Clients.All.SendAsync("connected", "connection has been created");
-            Console.WriteLine(Context.ConnectionId);
+            await Clients.All.SendAsync("connected", "connection has been created");
         }
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
             await Clients.All.SendAsync("Disconnected", "connection disconnected");
-            Console.WriteLine("Connection stoped: " + Context.ConnectionId);
-            if(_tempDb.activeUserId.TryGetValue(Context.ConnectionId, out string userId))
-            {
-                Console.WriteLine("userId: "+ userId);
-                string value;
-                _tempDb.activeUserId.TryRemove(Context.ConnectionId, out value);
-            }
-
-            var userList = new List<string>(_tempDb.activeUserId.Values);
+            var userId = _tempDb.connectedUserId.First(x => x.Value == Context.ConnectionId).Key;
+            string value;
+            _tempDb.connectedUserId.TryRemove(userId, out value); 
+            var userList = new List<string>(_tempDb.connectedUserId.Values);
             var listcvt = JsonConvert.SerializeObject(userList, Formatting.Indented);
             await Clients.All.SendAsync("UserDisconnected", listcvt);
             await base.OnDisconnectedAsync(ex);
@@ -69,12 +64,18 @@ namespace ChattingSystem.Hubs
         {
             try
             {
-                    var conversationId = await _conversationGroupRepository.GetConversationIdByGroupId(groupId);
-                    var participant = await _participantRepository.GetByConversationIdandUserId(conversationId, userId);
-                Console.WriteLine("userid: " + userId + ", groupId: " + groupId + " message; " + message + " conid: " + conversationId);
-
-                if (participant == null) Console.WriteLine("participant null");
-                     if (conversationId == null) Console.WriteLine("conversationId null");
+                var conversationId = await _conversationGroupRepository.GetConversationIdByGroupId(groupId);
+                var participant = await _participantRepository.GetByConversationIdandUserId(conversationId, userId);
+                var messageTempId = 0;
+                if (_tempDb.userMessage.Any())
+                {
+                    var lastItem = _tempDb.userMessage.Last();
+                    messageTempId = lastItem.Key + 1;
+                    _tempDb.userMessage[messageTempId] = userId;
+                }else
+                {
+                    _tempDb.userMessage[0] = userId;
+                }
 
                 var messageCreate = new Message
                     {
@@ -88,38 +89,21 @@ namespace ChattingSystem.Hubs
 
                     await Clients
                         .Group("group no." + groupId.ToString())
-                        .SendAsync("SendMessage", participant.Title, message);
+                        .SendAsync("SendMessage", participant.Title, message, messageTempId);
             }
             catch(Exception ex)
             {
-                Console.WriteLine("SOmething went wrong");
-                Console.WriteLine(ex);
+                throw;
             }
         }
         
+ 
         public async Task Login(int userId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, "user no." + userId.ToString());
 
-            var isExisted = false;
-            foreach (KeyValuePair<string, string> pair in _tempDb.activeUserId)
-            {
-                Console.WriteLine("Key: {0}, Value: {1}",
-                                    pair.Key, pair.Value);
-                if(pair.Value == userId.ToString())
-                {
-                    isExisted = true;
-                    break;
-                }
-            }
-
-            if(isExisted == false)
-            {
-                _tempDb.activeUserId[Context.ConnectionId] = userId.ToString();
-            }
             _tempDb.connectedUserId[userId.ToString()] = Context.ConnectionId;
-             var userList = new List<string>(_tempDb.activeUserId.Values);
-            userList.ForEach(e => Console.WriteLine(e));
+            var userList = new List<string>(_tempDb.connectedUserId.Keys);
 
             var listcvt =  JsonConvert.SerializeObject(userList, Formatting.Indented);
    
@@ -138,7 +122,7 @@ namespace ChattingSystem.Hubs
                     Content = msg,
                     CreatedAt = DateTime.Now.ToString("h:mm:ss")
                 };
-                //var result = await _directMessageRepository.Create(DMCreate);
+                var result = await _directMessageRepository.Create(DMCreate);
                 var sender = await _userRepository.GetById(senderId);
                 await Groups.AddToGroupAsync(Context.ConnectionId, "user no." + receiverid.ToString());
 
@@ -149,7 +133,7 @@ namespace ChattingSystem.Hubs
 
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                throw;
             }
         }
 
@@ -157,20 +141,15 @@ namespace ChattingSystem.Hubs
         {
             try
             {
-                foreach (var item in idArr)
-                {
-                    Console.WriteLine(item.ToString());
-                    Console.WriteLine("------");
-                }
-            
+
                 foreach (var i in idArr)
                 {
                     if (_tempDb.connectedUserId.TryGetValue(i.ToString(), out string connectionId))
                     {
-                        await Groups.AddToGroupAsync(connectionId, "newcreatedgroup."+groupId.ToString());
-                        Console.WriteLine("id: " + i.ToString() + "conId: " + connectionId);
+                        await Groups.AddToGroupAsync(connectionId, "newcreatedgroup." + groupId.ToString());
                     }
                 }
+
                 string msg = "You have been added to group " + groupTitle;
 
                 await Clients
@@ -179,7 +158,7 @@ namespace ChattingSystem.Hubs
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                throw;
             }
         }
     }

@@ -29,7 +29,6 @@ namespace ChattingSystem.Repositories.Implements
             Conversation result = new Conversation();
             try
             {
-                Console.WriteLine("create conversation");
                 string query = "INSERT INTO Conversation (SiteId, Title, Status) " +
                     "OUTPUT INSERTED.*" +
                     "values(@SiteId, @Title, @Status);";
@@ -46,9 +45,7 @@ namespace ChattingSystem.Repositories.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine("conversion repo went wrong");
-                Console.WriteLine(ex.ToString());
-                return result;
+                throw;
             }
         }
 

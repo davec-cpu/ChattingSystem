@@ -8,5 +8,6 @@ namespace ChattingSystem.Repositories.Interfaces
         Task<IEnumerable<GroupUser>>? GetByUserId(int? userId);
         Task<IEnumerable<GroupUser>>? GetByGroupId(int? groupId);
         Task<IEnumerable<GroupUser>>? DeleteByGroupId(int? groupId);
+        Task<GroupUser>? DeleteByGroupIdAndUserId(int? groupId, int? userId);
     }
 }

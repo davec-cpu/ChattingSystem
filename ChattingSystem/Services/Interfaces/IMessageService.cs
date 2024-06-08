@@ -11,5 +11,6 @@ namespace ChattingSystem.Services.Interfaces
         Task<IEnumerable<MessageExpansion.General>>? GetMsgExpByConversationId(int? conversationId);
         Task<(IEnumerable<Message>?, int?)> GetByConversationIdWithTTRecords(int? conversationId);
         Task<Message>? DeleteByConId(int? conversationId);
+        Task<IEnumerable<Message>> DeleteByConversationIdAndParticipantId(int? conId, int? participantId);
     }
 }

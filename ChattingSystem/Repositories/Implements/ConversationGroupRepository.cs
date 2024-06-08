@@ -17,7 +17,6 @@ namespace ChattingSystem.Repositories.Implements
         {
             try
             {
-                Console.WriteLine("create conversation group");
                 string query = "INSERT INTO ConversationGroup (SiteId, ConversationId, GroupId) " +
                     "OUTPUT INSERTED.*" +
                     "VALUES (@SiteId, @ConversationId, @GroupId);";
@@ -29,13 +28,11 @@ namespace ChattingSystem.Repositories.Implements
                 using (var connection = _context.CreateConnection())
                 {
                     var result = await connection.QuerySingleAsync<ConversationGroup>(query, parameters);
-                    Console.WriteLine("success");
                     return result;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -66,7 +63,7 @@ namespace ChattingSystem.Repositories.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+    
                 throw;
             }
         }

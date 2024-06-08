@@ -13,19 +13,6 @@ namespace ChattingSystem.Services.Implements
         {
             _participantRepository = participantRepository;
         }
-        public async Task<IEnumerable<Participant>>? Create(Participant? participant)
-        {
-            try
-            {
-                var result = await _participantRepository.Create(participant);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                throw;
-            }
-        }
 
         public async Task<IEnumerable<Participant>>? CreateMultiple(IEnumerable<Participant>? participant)
         {
@@ -35,7 +22,7 @@ namespace ChattingSystem.Services.Implements
 
                 foreach (var item in participant)
                 {
-                    var temp = await _participantRepository.CreateObj(item);
+                    var temp = await _participantRepository.Create(item);
                     result.Add(temp);
                 }
                 return result;
@@ -47,11 +34,11 @@ namespace ChattingSystem.Services.Implements
             }
         }
 
-        public async Task<Participant>? CreateObj(Participant? participant)
+        public async Task<Participant>? Create(Participant? participant)
         {
             try
             {
-                var result = await _participantRepository.CreateObj(participant);
+                var result = await _participantRepository.Create(participant);
                 return result;
             }
             catch (Exception ex) {
@@ -103,6 +90,32 @@ namespace ChattingSystem.Services.Implements
         {
             var result = await _participantRepository.GetById(Id);
             return result;
+        }
+
+        public async Task<Participant>? DeleteByConIdAndUserId(int? conId, int? userId)
+        {
+            try
+            {
+                var result = await _participantRepository.DeleteByConIdAndUserId(conId, userId);
+                return result;
+            }
+            catch(Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<int>? GetUserId(int? participantId)
+        {
+            try
+            {
+                var result = await _participantRepository.GetUserId(participantId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

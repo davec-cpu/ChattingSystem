@@ -9,5 +9,7 @@ namespace ChattingSystem.Services.Interfaces
         Task<IEnumerable<GroupUser>>? GetByGroupId(int? groupId);
         Task<IEnumerable<GroupUser>>? CreateMultiple(IEnumerable<GroupUser>? groupUsers);
         Task<IEnumerable<GroupUser>>? DeleteByGroupId(int? groupId);
+        Task<GroupUser>? DeleteByGroupIdAndUserId(int? groupId, int? userId);
+
     }
 }

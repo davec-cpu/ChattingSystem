@@ -66,24 +66,20 @@ namespace ChattingSystem.Controllers
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
 
-        [HttpGet("getbyconidanduserid")]
-        public async Task<IActionResult> GetConversationIdByGroupId()
+        [HttpDelete("delbyconidandgroupid/{conId}/{groupId}")]
+        public async Task<IActionResult> Delete(int? conId, int? groupId)
         {
             try
             {
-                var conversationId = await _conversationGroupRepository.GetConversationIdByGroupId(2);
-                Console.WriteLine("conversationid : " + conversationId);
-;                var result = await _participantRepository.GetByConversationIdandUserId(0, conversationId);
+                var result = _messageService.DeleteByConversationIdAndParticipantId(conId, groupId);
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }

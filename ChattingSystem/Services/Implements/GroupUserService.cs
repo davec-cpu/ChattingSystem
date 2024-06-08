@@ -23,7 +23,6 @@ namespace ChattingSystem.Services.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -37,7 +36,6 @@ namespace ChattingSystem.Services.Implements
             }
             catch (Exception ex) 
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -51,7 +49,6 @@ namespace ChattingSystem.Services.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -70,7 +67,6 @@ namespace ChattingSystem.Services.Implements
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -84,8 +80,20 @@ namespace ChattingSystem.Services.Implements
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
-                return null;
+                throw;
+            }
+        }
+
+        public async Task<GroupUser>? DeleteByGroupIdAndUserId (int? groupId, int? userId)
+        {
+            try
+            {
+                var result = await _groupUserRepository.DeleteByGroupIdAndUserId(groupId, userId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

@@ -23,7 +23,6 @@ namespace ChattingSystem.Controllers
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -38,7 +37,6 @@ namespace ChattingSystem.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }

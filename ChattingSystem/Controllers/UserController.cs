@@ -76,7 +76,6 @@ namespace ChattingSystem.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
                 return NotFound();
             }
         }
@@ -91,7 +90,6 @@ namespace ChattingSystem.Controllers
                 return Ok(result);
             }catch(Exception e)
             {
-                Console.WriteLine(e.Message);
                 return BadRequest("Something went wrong");
             }
         }
@@ -111,7 +109,6 @@ namespace ChattingSystem.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
@@ -128,7 +125,6 @@ namespace ChattingSystem.Controllers
                 return Ok(result);
             }catch(Exception ex)
             {
-                Console.WriteLine(ex);
                 throw;
             }
         }
